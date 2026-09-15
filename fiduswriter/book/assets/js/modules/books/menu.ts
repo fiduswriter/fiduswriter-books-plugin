@@ -7,7 +7,7 @@ import {NativeBookExporter} from "@fiduswriter/books-document/exporter/native"
 import {ODTBookExporter} from "@fiduswriter/books-document/exporter/odt"
 import {PrintBookExporter} from "@fiduswriter/books-document/exporter/print"
 import {getMissingChapterData} from "@fiduswriter/books-document/exporter/tools"
-import download from "downloadjs"
+import {saveFile} from "@fiduswriter/document/exporter/save"
 import {FileDialog, NewFolderDialog, addAlert, addProgress} from "fwtoolkit"
 import {BookAccessRightsDialog} from "./accessrights"
 import {createChapterLoader} from "./adapters/chapter-loader"
@@ -25,7 +25,8 @@ let currentlySearching = false
  * their base `download()` simply returns the produced Blob. In the browser we
  * therefore pre-load the chapter data with the core-backed adapters — after
  * which the exporter's own internal `getMissingChapterData` call is a no-op —
- * and deliver the finished Blob to the user via downloadjs.
+ * and deliver the finished Blob to the user via saveFile (File System Access
+ * API where available, download fallback otherwise).
  *
  * @param {Object} exporter - A constructed book exporter instance.
  * @param {Object} overview - The BookOverview page.
@@ -60,7 +61,12 @@ const runBookExport = (exporter, overview, mimeType, rawContent = false) => {
         .then(blob => {
             task.update(100, gettext("Export complete."))
             if (blob) {
-                download(blob, exporter.defaultFilename, mimeType)
+                const extension = `.${exporter.defaultFilename.split(".").pop()}`
+                saveFile(blob, exporter.defaultFilename, {
+                    description: exporter.book.title,
+                    mimeType,
+                    extensions: [extension]
+                })
             }
             return blob
         })
