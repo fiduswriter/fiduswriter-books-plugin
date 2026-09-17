@@ -82,7 +82,7 @@ jobs:
             cd fiduswriter
             coverage run $(which fiduswriter) test book
       - name: Upload failed test screenshots
-        if: ${{ failure() }}
+        if: ${{ github.server_url == 'https://github.com' && failure() }}
         uses: actions/upload-artifact@v4
         with:
           name: failure-artifacts
