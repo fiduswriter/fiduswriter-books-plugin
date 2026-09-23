@@ -1,6 +1,6 @@
 {
     dependencies: {
-        "@fiduswriter/books-document": "^0.1.24",
+        "@fiduswriter/books-document": "^0.1.25",
         "@fiduswriter/document": "^0.3.16",
         "@fiduswriter/frontend": "^0.1.56",
         "@fiduswriter/image-manager": "^0.1.28",
